@@ -9,6 +9,7 @@ black = "==19.10b0"
 [packages]
 django = "*"
 django-allauth = "*"
+requests-oauthlib = "*"
 
 [requires]
 python_version = "3.8"

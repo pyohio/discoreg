@@ -25,7 +25,9 @@ SECRET_KEY = "^v2lvne2s4m!no!z)x6rhx%#a6+9p%7o@vj)=3e=(y01dskz)v"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "tylerdave.ngrok.io",
+]
 
 
 # Application definition
@@ -126,3 +128,6 @@ STATIC_URL = "/static/"
 
 SITE_ID = 1
 
+SOCIALACCOUNT_AUTO_SIGNUP = True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
