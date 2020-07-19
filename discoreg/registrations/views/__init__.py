@@ -119,4 +119,3 @@ def link(request):
     )
     return redirect(authorization_url)
     return HttpResponse(authorization_url)
-

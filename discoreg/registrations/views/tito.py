@@ -10,9 +10,10 @@ logger = logging.getLogger(__name__)
 
 TITO_WEBHOOK_TOKEN = settings.TITO_WEBHOOK_TOKEN
 
+
 @csrf_exempt
 def tito_webhook(request):
-    if request.META.get('HTTP_AUTHORIZATION') != f"Bearer {TITO_WEBHOOK_TOKEN}":
+    if request.META.get("HTTP_AUTHORIZATION") != f"Bearer {TITO_WEBHOOK_TOKEN}":
         return HttpResponse("Unauthorized", status=401)
 
     payload = json.loads(request.body.decode("utf-8"))
