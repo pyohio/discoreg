@@ -141,7 +141,6 @@ SITE_ID = 1
 # ACCOUNT_EMAIL_REQUIRED = True
 
 
-DISCORD_REDIRECT_URI = "https://tylerdave.ngrok.io/registrations/callback"
 DISCORD_CLIENT_ID = os.environ["DISCORD_CLIENT_ID"]
 DISCORD_CLIENT_SECRET = os.environ["DISCORD_CLIENT_SECRET"]
 DISCORD_API_BASE_URL = "https://discord.com/api"

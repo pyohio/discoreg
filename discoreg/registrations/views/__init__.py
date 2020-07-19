@@ -1,7 +1,7 @@
 import os
 
 import requests
-from django.urls import resolve
+from django.urls import resolve, reverse
 from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import redirect, render
@@ -16,12 +16,15 @@ DISCORD_BOT_TOKEN = settings.DISCORD_BOT_TOKEN
 DISCORD_CLIENT_ID = settings.DISCORD_CLIENT_ID
 DISCORD_CLIENT_SECRET = settings.DISCORD_CLIENT_SECRET
 DISCORD_GUILD_ID = settings.DISCORD_GUILD_ID
-DISCORD_REDIRECT_URI = settings.DISCORD_REDIRECT_URI
 DISCORD_SCOPES = settings.DISCORD_SCOPES
 DISCORD_TOKEN_URL = settings.DISCORD_TOKEN_URL
 
 
-def make_session(token=None, state=None, scope=None):
+def make_callback_uri(request):
+    # FIXME: this is a hack! Need to figure out how to make sure this is a secure URI
+    return request.build_absolute_uri(reverse('callback')).replace('http://', 'https://')
+
+def make_session(redirect_uri, token=None, state=None, scope=None):
     if scope is None:
         scope = DISCORD_SCOPES
     return OAuth2Session(
@@ -29,7 +32,7 @@ def make_session(token=None, state=None, scope=None):
         token=token,
         state=state,
         scope=scope,
-        redirect_uri=DISCORD_REDIRECT_URI,
+        redirect_uri=redirect_uri,
         auto_refresh_kwargs={
             "client_id": DISCORD_CLIENT_ID,
             "client_secret": DISCORD_CLIENT_SECRET,
@@ -48,14 +51,16 @@ def callback(request):
     if request.GET.get("error"):
         return HttpResponse(request.GET.get("error"))
 
-    discord_session = make_session(state=request.GET["state"])
+    callback_uri = make_callback_uri(request)
+
+    discord_session = make_session(callback_uri, state=request.GET["state"])
     token = discord_session.fetch_token(
         DISCORD_TOKEN_URL,
         client_secret=DISCORD_CLIENT_SECRET,
         code=request.GET["code"],
         authorization_response=f"https://tylerdave.ngrok.com/{request.get_full_path()}",
     )
-    auth_session = make_session(token=token)
+    auth_session = make_session(callback_uri, token=token)
     user = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me").json()
     guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
 
@@ -113,7 +118,8 @@ def callback(request):
 
 
 def link(request):
-    discord_session = make_session()
+    callback_uri = make_callback_uri(request)
+    discord_session = make_session(callback_uri)
     authorization_url, state = discord_session.authorization_url(
         DISCORD_AUTHORIZATION_BASE_URL
     )
