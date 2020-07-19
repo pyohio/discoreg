@@ -7,6 +7,9 @@ class DiscordServer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.name} <{self.server_id}>"
+
 
 class DiscordRole(models.Model):
     name = models.CharField(max_length=32, blank=True)
@@ -15,6 +18,9 @@ class DiscordRole(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.name} <{self.discord_role_id}>"
+
 
 class EmailRole(models.Model):
     email = models.EmailField()
@@ -22,10 +28,17 @@ class EmailRole(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        role_names = [role.name for role in self.discord_roles.all()]
+        return f"{self.email} {role_names}"
+
 
 class Registration(models.Model):
     email = models.ForeignKey(EmailRole, on_delete=models.CASCADE)
     reference_id = models.CharField(max_length=32)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.reference_id} ({self.email.email})"
 
