@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.sites",
     "django.contrib.staticfiles",
-    "registrations"
+    "registrations",
 ]
 
 MIDDLEWARE = [
@@ -53,6 +53,12 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+MIDDLEWARE_CLASSES = [
+        'whitenoise.middleware.WhiteNoiseMiddleware',
+]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = "discoreg.urls"
 
@@ -128,3 +134,25 @@ SITE_ID = 1
 # SOCIALACCOUNT_AUTO_SIGNUP = True
 # ACCOUNT_AUTHENTICATION_METHOD = "email"
 # ACCOUNT_EMAIL_REQUIRED = True
+
+
+DISCORD_REDIRECT_URI = "https://tylerdave.ngrok.io/registrations/callback"
+DISCORD_CLIENT_ID = os.environ["DISCORD_CLIENT_ID"]
+DISCORD_CLIENT_SECRET = os.environ["DISCORD_CLIENT_SECRET"]
+DISCORD_API_BASE_URL = "https://discord.com/api"
+DISCORD_AUTHORIZATION_BASE_URL = f"{DISCORD_API_BASE_URL}/oauth2/authorize"
+DISCORD_TOKEN_URL = f"{DISCORD_API_BASE_URL}/oauth2/token"
+DISCORD_SCOPES = [
+    "identify",
+    "email",
+    # "guilds",
+    "guilds.join",
+]
+DISCORD_GUILD_ID = os.environ["DISCORD_GUILD_ID"]
+DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
+TITO_WEBHOOK_TOKEN = os.environ["TITO_WEBHOOK_TOKEN"]
+
+
+import django_heroku
+
+django_heroku.settings(locals())

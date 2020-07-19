@@ -3,11 +3,12 @@ import logging
 import os
 
 from django.http import HttpResponse
+from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
 logger = logging.getLogger(__name__)
 
-TITO_WEBHOOK_TOKEN = os.environ.get('TITO_WEBHOOK_TOKEN')
+TITO_WEBHOOK_TOKEN = settings.TITO_WEBHOOK_TOKEN
 
 @csrf_exempt
 def tito_webhook(request):

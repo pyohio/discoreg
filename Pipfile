@@ -10,6 +10,8 @@ black = "==19.10b0"
 django = "*"
 requests-oauthlib = "*"
 discord-py = "*"
+django-heroku = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.8"
