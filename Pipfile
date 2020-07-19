@@ -12,6 +12,7 @@ requests-oauthlib = "*"
 discord-py = "*"
 django-heroku = "*"
 psycopg2 = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
