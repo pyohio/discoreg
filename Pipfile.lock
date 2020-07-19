@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "1a15943a3cd8144daa7986e478dff3fc7264908f59ac24b37615ca16d1efd325"
+            "sha256": "b64853375f7b2340c76a5a1f58bf9a0b628ce07a244e06e2f33198fbc9070a39"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -68,13 +68,6 @@
             ],
             "version": "==3.0.4"
         },
-        "defusedxml": {
-            "hashes": [
-                "sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93",
-                "sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5"
-            ],
-            "version": "==0.6.0"
-        },
         "discord-py": {
             "hashes": [
                 "sha256:8ef58d6fc1e66903bc00ae79c4c09a38aa71043e88a83da4d2e8b9b1c9f9b9e2"
@@ -89,13 +82,6 @@
             ],
             "index": "pypi",
             "version": "==3.0.8"
-        },
-        "django-allauth": {
-            "hashes": [
-                "sha256:f17209410b7f87da0a84639fd79d3771b596a6d3fc1a8e48ce50dabc7f441d30"
-            ],
-            "index": "pypi",
-            "version": "==0.42.0"
         },
         "idna": {
             "hashes": [
@@ -132,13 +118,6 @@
                 "sha256:df884cd6cbe20e32633f1db1072e9356f53638e4361bef4e8b03c9127c9328ea"
             ],
             "version": "==3.1.0"
-        },
-        "python3-openid": {
-            "hashes": [
-                "sha256:33fbf6928f401e0b790151ed2b5290b02545e8775f982485205a066f874aaeaf",
-                "sha256:6626f771e0417486701e0b4daff762e7212e820ca5b29fcc0d05f6f8736dfa6b"
-            ],
-            "version": "==3.2.0"
         },
         "pytz": {
             "hashes": [

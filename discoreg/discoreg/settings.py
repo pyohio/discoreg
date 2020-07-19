@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "tylerdave.ngrok.io",
+    "localhost",
 ]
 
 
@@ -40,10 +41,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.sites",
     "django.contrib.staticfiles",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.discord",
     "registrations"
 ]
 
@@ -91,7 +88,6 @@ DATABASES = {
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 
@@ -129,6 +125,6 @@ STATIC_URL = "/static/"
 
 SITE_ID = 1
 
-SOCIALACCOUNT_AUTO_SIGNUP = True
-ACCOUNT_AUTHENTICATION_METHOD = "email"
-ACCOUNT_EMAIL_REQUIRED = True
+# SOCIALACCOUNT_AUTO_SIGNUP = True
+# ACCOUNT_AUTHENTICATION_METHOD = "email"
+# ACCOUNT_EMAIL_REQUIRED = True
