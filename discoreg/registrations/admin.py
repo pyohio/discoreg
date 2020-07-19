@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import DiscordRole, DiscordServer, EmailRole, Registration
+
+admin.site.register(DiscordRole)
+admin.site.register(DiscordServer)
+admin.site.register(EmailRole)
+admin.site.register(Registration)
