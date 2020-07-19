@@ -162,4 +162,4 @@ TITO_WEBHOOK_TOKEN = os.environ["TITO_WEBHOOK_TOKEN"]
 
 import django_heroku
 
-django_heroku.settings(locals() allowed_hosts=False)
+django_heroku.settings(locals(), allowed_hosts=False)
