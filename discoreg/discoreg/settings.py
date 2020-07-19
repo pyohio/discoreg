@@ -26,6 +26,8 @@ SECRET_KEY = "^v2lvne2s4m!no!z)x6rhx%#a6+9p%7o@vj)=3e=(y01dskz)v"
 DEBUG = os.environ.get("DEBUG", False) == "1"
 
 ALLOWED_HOSTS = [
+    "*.herokuapp.com",
+    "*.pyohio.org",
     "tylerdave.ngrok.io",
     "localhost",
 ]
@@ -160,4 +162,4 @@ TITO_WEBHOOK_TOKEN = os.environ["TITO_WEBHOOK_TOKEN"]
 
 import django_heroku
 
-django_heroku.settings(locals())
+django_heroku.settings(locals() allowed_hosts=False)
