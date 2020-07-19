@@ -1,1 +1,1 @@
-web: gunicorn discoreg.wsgi --log-file -
+web: gunicorn --pythonpath discoreg discoreg.wsgi --log-file -
