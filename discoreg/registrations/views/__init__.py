@@ -22,7 +22,7 @@ DISCORD_SCOPES = [
     # "connections",
 ]
 DISCORD_GUILD_ID = "715432774366003210"
-DISCORD_BOT_TOKEN = "NzMyMDg3MTMyNTkxNzUxMjE4.XxMwXw.Y59jk9fLJALkXgxQY5tu6eBoixU"                   
+DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 
 
 # if 'http://' in REDIRECT_URI:
