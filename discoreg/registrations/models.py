@@ -15,6 +15,7 @@ class DiscordRole(models.Model):
     name = models.CharField(max_length=32, blank=True)
     discord_role_id = models.CharField(max_length=32)
     discord_server = models.ForeignKey(DiscordServer, on_delete=models.CASCADE)
+    assign_by_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
