@@ -2,6 +2,7 @@ import json
 import logging
 import os
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -24,7 +25,13 @@ def tito_webhook(request):
 
     default_roles = DiscordRole.objects.filter(assign_by_default=True)
 
-    email_role, created = EmailRole.objects.get_or_create(email__iexact=payload["email"])
+    try:
+        email_role = EmailRole.objects.get(email__iexact=payload["email"])
+    except ObjectDoesNotExist:
+        email_role = EmailRole(email=payload["email"].lower())
+        email_role.save()
+
+    logger.error(email_role)
     email_role.discord_roles.add(*default_roles)
     email_role.save()
     registration = Registration(email=email_role, reference_id=payload["reference_id"])
