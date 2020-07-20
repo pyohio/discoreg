@@ -56,11 +56,15 @@ def render_error_response(request, error_title=None, error_message=None, status=
     }
     return render(request, "registrations/error.html", context=context, status=status)
 
+
 def get_user(auth_session):
     return auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me").json()
-    
+
+
 def add_user_to_guild(user_id, token):
-    auth_headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}", }
+    auth_headers = {
+        "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
+    }
     url = f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user_id}"
     response = requests.put(
         url, json={"access_token": token["access_token"]}, headers=auth_headers
@@ -68,12 +72,16 @@ def add_user_to_guild(user_id, token):
     response.raise_for_status()
     return response
 
+
 def add_user_to_role(user_id, role_id):
-    auth_headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}", }
+    auth_headers = {
+        "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
+    }
     url = f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user_id}/roles/{role_id}"
     response = requests.put(url, headers=auth_headers, json={})
     response.raise_for_status()
     return response
+
 
 def index(request):
     return render(request, "registrations/index.html")
@@ -115,13 +123,12 @@ def callback(request):
         return render_error_response(
             request,
             error_title="Email Not Registered",
-            error_message=f"A registration could not be found using your Discord account email address: {user['email']}. Please register for PyOhio using the same email address and then return to this site."
+            error_message=f"A registration could not be found using your Discord account email address: {user['email']}. Please register for PyOhio using that email address or log in with another Discord account and then return to this site.",
         )
-    
-    add_user_to_guild(user['id'], token)
 
+    add_user_to_guild(user["id"], token)
 
-    #guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
+    # guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
 
     # joined = auth_session.put(f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user['id']}").json()
     # roles = auth_session.get(f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/roles").json()
@@ -130,7 +137,7 @@ def callback(request):
     #
     added_roles = []
     for discord_role in email_roles.discord_roles.all():
-        add_user_to_role(user['id'], discord_role.discord_role_id)
+        add_user_to_role(user["id"], discord_role.discord_role_id)
         added_roles.append(discord_role.name)
 
     # app_url = f"{DISCORD_API_BASE_URL}/applications/@me"
@@ -156,7 +163,6 @@ def callback(request):
         "joined_username": user["username"],
         "joined_email": user["email"],
         "added_roles": added_roles,
-
     }
     return render(request, "registrations/success.html", context)
 

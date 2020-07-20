@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registrations', '0003_discordrole_assign_by_default'),
+        ("registrations", "0003_discordrole_assign_by_default"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='emailrole',
-            name='email',
+            model_name="emailrole",
+            name="email",
             field=models.EmailField(max_length=254, unique=True),
         ),
     ]

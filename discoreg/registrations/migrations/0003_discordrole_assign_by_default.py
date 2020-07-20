@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registrations', '0002_auto_20200719_0646'),
+        ("registrations", "0002_auto_20200719_0646"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='discordrole',
-            name='assign_by_default',
+            model_name="discordrole",
+            name="assign_by_default",
             field=models.BooleanField(default=False),
         ),
     ]
