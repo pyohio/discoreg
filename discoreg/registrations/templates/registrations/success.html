@@ -5,12 +5,16 @@
 {% block content %}
 
 <div class="content">
-    <h1 class="title">Successfully Registered</h1>
+    <h1 class="title">Successfully Joined!</h1>
     <div class="box">
-        <h2 class="subtitle">Detils</h2>
-        <p>{{ joined_username }} ({{ joined_email}}) added to PyOhio with the following roles:<br/>
+        <h2 class="subtitle">Details</h2>
+        <p>{{ joined_username }} ({{ joined_email}}) as been added to the PyOhio Discord server with the following roles:<br/>
             <ul>
-                <li>Role 1</li>
+            {% for role in added_roles %}
+                <li>{{ role }}</li>
+            {% empty %}
+                <em>No roles assigned!</em>
+            {% endfor %}
             </ul>
         </p>
         <p><a href="https://discord.com/channels/715432774366003210/" class="button is-link">Chat on PyOhio Discord Now!</a></p>

@@ -59,11 +59,21 @@ def render_error_response(request, error_title=None, error_message=None, status=
 def get_user(auth_session):
     return auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me").json()
     
-def add_user_to_guild():
-    pass
+def add_user_to_guild(user_id, token):
+    auth_headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}", }
+    url = f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user_id}"
+    response = requests.put(
+        url, json={"access_token": token["access_token"]}, headers=auth_headers
+    )
+    response.raise_for_status()
+    return response
 
-def add_user_to_role():
-    pass
+def add_user_to_role(user_id, role_id):
+    auth_headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}", }
+    url = f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user_id}/roles/{role_id}"
+    response = requests.put(url, headers=auth_headers, json={})
+    response.raise_for_status()
+    return response
 
 def index(request):
     return render(request, "registrations/index.html")
@@ -108,35 +118,23 @@ def callback(request):
             error_message=f"A registration could not be found using your Discord account email address: {user['email']}. Please register for PyOhio using the same email address and then return to this site."
         )
     
+    add_user_to_guild(user['id'], token)
+
 
     #guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
 
     # joined = auth_session.put(f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user['id']}").json()
     # roles = auth_session.get(f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/roles").json()
-    auth_headers = {
-        "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
-    }
-    join_url = f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user['id']}"
-
-    joined_response = requests.put(
-        join_url, json={"access_token": token["access_token"]}, headers=auth_headers
-    )
-    joined_data = joined_response.content
     # guilds2 = None #auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
     # = discord_session.get(f"{DISCORD_API_BASE_URL}/users/@me").json()
     #
-    roles = requests.get(
-        f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/roles", headers=auth_headers
-    ).json()
+    added_roles = []
+    for discord_role in email_roles.discord_roles.all():
+        add_user_to_role(user['id'], discord_role.discord_role_id)
+        added_roles.append(discord_role.name)
 
-    ATTENDEE_ROLE = "731868513068646460"
-    role_url = f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user['id']}/roles/{ATTENDEE_ROLE}"
-    role_response = requests.put(role_url, headers=auth_headers, json={})
-
-    role_data = role_response.content
-
-    app_url = f"{DISCORD_API_BASE_URL}/applications/@me"
-    app_response = requests.get(app_url, headers=auth_headers)
+    # app_url = f"{DISCORD_API_BASE_URL}/applications/@me"
+    # app_response = requests.get(app_url, headers=auth_headers)
 
     details = {
         # "token": token,
@@ -145,23 +143,22 @@ def callback(request):
         # "join_url": join_url,
         # "request_headers": joined_response.request.headers,
         # "request_body": joined_response.request.body,
-        "roles": roles,
-        "role_data": role_data,
-        "role_url": role_response.request.url,
-        "role_response": role_response,
+        # "roles": roles,
+        # "role_data": role_data,
+        # "role_url": role_response.request.url,
+        # "role_response": role_response,
         # "user_res_data": user_response.json(),
         # "app_response": app_response.json(),
     }
     # details= None
 
     context = {
-        "user": user,
-        "email": user.get("email"),
-        # "servers": guilds,
-        "joined": joined_data,
-        "details": details,
+        "joined_username": user["username"],
+        "joined_email": user["email"],
+        "added_roles": added_roles,
+
     }
-    return render(request, "registrations/link.html", context)
+    return render(request, "registrations/success.html", context)
 
 
 def link(request):
