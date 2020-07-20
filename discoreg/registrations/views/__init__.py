@@ -1,6 +1,7 @@
 import os
 
 import requests
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls import resolve, reverse
 from django.http import HttpResponse
 from django.conf import settings
@@ -98,8 +99,15 @@ def callback(request):
 
     user = get_user(auth_session)
 
-    #user["email"]
-
+    try:
+        email_roles = EmailRole.objects.get(email=user["email"])
+    except ObjectDoesNotExist:
+        return render_error_response(
+            request,
+            error_title="Email Not Registered",
+            error_message=f"A registration could not be found using your Discord account email address: {user['email']}. Please register for PyOhio using the same email address and then return to this site."
+        )
+    
 
     #guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
 
