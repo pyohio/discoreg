@@ -24,7 +24,7 @@ class DiscordRole(models.Model):
 
 
 class EmailRole(models.Model):
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     discord_roles = models.ManyToManyField(DiscordRole)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

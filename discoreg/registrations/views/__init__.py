@@ -8,6 +8,7 @@ from django.shortcuts import redirect, render
 from oauthlib.oauth2.rfc6749.errors import InvalidClientIdError
 from requests_oauthlib import OAuth2Session
 
+from ..models import EmailRole
 from .tito import tito_webhook
 
 
@@ -23,7 +24,10 @@ DISCORD_TOKEN_URL = settings.DISCORD_TOKEN_URL
 
 def make_callback_uri(request):
     # FIXME: this is a hack! Need to figure out how to make sure this is a secure URI
-    return request.build_absolute_uri(reverse('registrations:callback')).replace('http://', 'https://')
+    return request.build_absolute_uri(reverse("registrations:callback")).replace(
+        "http://", "https://"
+    )
+
 
 def make_session(redirect_uri, token=None, state=None, scope=None):
     if scope is None:
@@ -42,12 +46,23 @@ def make_session(redirect_uri, token=None, state=None, scope=None):
     )
 
 
-def generic_error_response(request):
+def render_error_response(request, error_title=None, error_message=None, status=400):
+    if error_message is None:
+        error_message = "There was an error verifying your account."
     context = {
-        "error_message": "There was an error verifying your account."
+        "error_title": error_title,
+        "error_message": error_message,
     }
-    return render(request, "registrations/error.html", context=context, status=400)
+    return render(request, "registrations/error.html", context=context, status=status)
 
+def get_user(auth_session):
+    return auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me").json()
+    
+def add_user_to_guild():
+    pass
+
+def add_user_to_role():
+    pass
 
 def index(request):
     return render(request, "registrations/index.html")
@@ -55,11 +70,16 @@ def index(request):
 
 def callback(request):
     if request.GET.get("error"):
-        return HttpResponse(request.GET.get("error"))
+        return render_error_response(
+            request,
+            error_title=request.GET.get("error"),
+            error_message=request.GET.get("error_description"),
+            status=401,
+        )
 
     callback_uri = make_callback_uri(request)
 
-    discord_session = make_session(callback_uri, state=request.GET["state"])
+    discord_session = make_session(callback_uri, state=request.GET.get("state"))
     try:
         token = discord_session.fetch_token(
             DISCORD_TOKEN_URL,
@@ -68,16 +88,20 @@ def callback(request):
             authorization_response=f"https://tylerdave.ngrok.com/{request.get_full_path()}",
         )
     except InvalidClientIdError:
-        context = {
-            "error_message": "Authorization is invalid or expired."
-        }
-        return render(request, "registrations/error.html", context=context, status=400)
+        return render_error_response(
+            request, error_message="Authorization invalid or expired."
+        )
     except:
-        return generic_error_response(request)
+        return render_error_response(request)
 
     auth_session = make_session(callback_uri, token=token)
-    user = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me").json()
-    guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
+
+    user = get_user(auth_session)
+
+    #user["email"]
+
+
+    #guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
 
     # joined = auth_session.put(f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user['id']}").json()
     # roles = auth_session.get(f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/roles").json()
@@ -113,7 +137,7 @@ def callback(request):
         # "join_url": join_url,
         # "request_headers": joined_response.request.headers,
         # "request_body": joined_response.request.body,
-        # "roles": roles,
+        "roles": roles,
         "role_data": role_data,
         "role_url": role_response.request.url,
         "role_response": role_response,
@@ -125,7 +149,7 @@ def callback(request):
     context = {
         "user": user,
         "email": user.get("email"),
-        "servers": guilds,
+        # "servers": guilds,
         "joined": joined_data,
         "details": details,
     }
