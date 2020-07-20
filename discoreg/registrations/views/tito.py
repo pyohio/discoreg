@@ -24,7 +24,7 @@ def tito_webhook(request):
 
     default_roles = DiscordRole.objects.filter(assign_by_default=True)
 
-    email_role, created = EmailRole.objects.get_or_create(email=payload["email"])
+    email_role, created = EmailRole.objects.get_or_create(email__iexact=payload["email"])
     email_role.discord_roles.add(*default_roles)
     email_role.save()
     registration = Registration(email=email_role, reference_id=payload["reference_id"])

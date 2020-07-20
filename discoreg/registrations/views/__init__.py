@@ -118,7 +118,7 @@ def callback(request):
     user = get_user(auth_session)
 
     try:
-        email_roles = EmailRole.objects.get(email=user["email"])
+        email_roles = EmailRole.objects.get(email__iexact=user["email"])
     except ObjectDoesNotExist:
         return render_error_response(
             request,
