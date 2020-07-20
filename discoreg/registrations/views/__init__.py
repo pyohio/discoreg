@@ -1,5 +1,6 @@
 import os
 
+import bleach
 import requests
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import resolve, reverse
@@ -51,8 +52,8 @@ def render_error_response(request, error_title=None, error_message=None, status=
     if error_message is None:
         error_message = "There was an error verifying your account."
     context = {
-        "error_title": error_title,
-        "error_message": error_message,
+        "error_title": bleach.clean(error_title),
+        "error_message": bleach.clean(error_message),
     }
     return render(request, "registrations/error.html", context=context, status=status)
 
