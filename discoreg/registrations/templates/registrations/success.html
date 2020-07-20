@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Register for PyOhio Chat: Success!{% endblock %}
+
+{% block content %}
+
+<div class="content">
+    <h1 class="title">Successfully Joined!</h1>
+    <div class="box">
+        <h2 class="subtitle">Details</h2>
+        <p>{{ joined_username }} ({{ joined_email}}) as been added to the PyOhio Discord server with the following roles:<br/>
+            <ul>
+            {% for role in added_roles %}
+                <li>{{ role }}</li>
+            {% empty %}
+                <em>No roles assigned!</em>
+            {% endfor %}
+            </ul>
+        </p>
+        <p><a href="https://discord.com/channels/715432774366003210/" class="button is-link">Chat on PyOhio Discord Now!</a></p>
+    </div>
+    <p>If you have any trouble with this process, please email info@pyohio.org for help.</p>
+</div>
+{% endblock %}

@@ -23,9 +23,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "^v2lvne2s4m!no!z)x6rhx%#a6+9p%7o@vj)=3e=(y01dskz)v"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", False) == "1"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "pyohio-registration.herokuapp.com",
+    "chat.pyohio.org",
+    "tylerdave.ngrok.io",
+    "localhost",
+]
 
 
 # Application definition
@@ -38,14 +43,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.sites",
     "django.contrib.staticfiles",
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.discord",
+    "registrations",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -53,6 +56,12 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# MIDDLEWARE_CLASSES = [
+#     "whitenoise.middleware.WhiteNoiseMiddleware",
+# ]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ROOT_URLCONF = "discoreg.urls"
 
@@ -88,7 +97,6 @@ DATABASES = {
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 
@@ -122,7 +130,34 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATIC_URL = "/static/"
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
 
 SITE_ID = 1
 
+# SOCIALACCOUNT_AUTO_SIGNUP = True
+# ACCOUNT_AUTHENTICATION_METHOD = "email"
+# ACCOUNT_EMAIL_REQUIRED = True
+
+
+DISCORD_CLIENT_ID = os.environ["DISCORD_CLIENT_ID"]
+DISCORD_CLIENT_SECRET = os.environ["DISCORD_CLIENT_SECRET"]
+DISCORD_API_BASE_URL = "https://discord.com/api"
+DISCORD_AUTHORIZATION_BASE_URL = f"{DISCORD_API_BASE_URL}/oauth2/authorize"
+DISCORD_TOKEN_URL = f"{DISCORD_API_BASE_URL}/oauth2/token"
+DISCORD_SCOPES = [
+    "identify",
+    "email",
+    # "guilds",
+    "guilds.join",
+]
+DISCORD_GUILD_ID = os.environ["DISCORD_GUILD_ID"]
+DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
+TITO_WEBHOOK_TOKEN = os.environ["TITO_WEBHOOK_TOKEN"]
+
+
+import django_heroku
+
+django_heroku.settings(locals(), allowed_hosts=False)

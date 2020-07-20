@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Register for PyOhio Chat: Error{% endblock %}
+
+{% block content %}
+
+<div class="content">
+    <h1 class="title">404 - Not Found</h1>
+    <div class="box">
+        <pre>The requested resource could not be found.</pre>
+        <p><a href="{% url "registrations:index" %}" target="_blank" class="button is-link">Return to Link Instructions</a></p>
+    </div>
+    <p>Please try again. If the problem persists, please email info@pyohio.org for help.</p>
+</div>
+{% endblock %}
