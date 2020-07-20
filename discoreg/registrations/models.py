@@ -35,8 +35,8 @@ class EmailRole(models.Model):
 
 
 class Registration(models.Model):
-    email = models.ForeignKey(EmailRole, on_delete=models.CASCADE)
     reference_id = models.CharField(max_length=32)
+    email = models.ForeignKey(EmailRole, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

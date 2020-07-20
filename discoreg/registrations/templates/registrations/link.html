@@ -1,6 +1,12 @@
-<div>
+{% extends "base.html" %}
+
+{% block title %}Linked!{% endblock %}
+
+{% block content %}
+<div class="box">
 <h2>User</h2>
 {{user}}
+</div>
 <h2>Email</h2>
 {{email}}
 <h2>Servers</h2>
@@ -9,4 +15,4 @@
 {{joined}}
 <h2>Details</h2>
 {{details}}
-</div>
+{% endblock %}

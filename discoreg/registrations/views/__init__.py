@@ -5,6 +5,7 @@ from django.urls import resolve, reverse
 from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import redirect, render
+from oauthlib.oauth2.rfc6749.errors import InvalidClientIdError
 from requests_oauthlib import OAuth2Session
 
 from .tito import tito_webhook
@@ -22,7 +23,7 @@ DISCORD_TOKEN_URL = settings.DISCORD_TOKEN_URL
 
 def make_callback_uri(request):
     # FIXME: this is a hack! Need to figure out how to make sure this is a secure URI
-    return request.build_absolute_uri(reverse('callback')).replace('http://', 'https://')
+    return request.build_absolute_uri(reverse('registrations:callback')).replace('http://', 'https://')
 
 def make_session(redirect_uri, token=None, state=None, scope=None):
     if scope is None:
@@ -41,10 +42,15 @@ def make_session(redirect_uri, token=None, state=None, scope=None):
     )
 
 
+def generic_error_response(request):
+    context = {
+        "error_message": "There was an error verifying your account."
+    }
+    return render(request, "registrations/error.html", context=context, status=400)
+
+
 def index(request):
-    return HttpResponse(
-        'Link your registration: <a href="/registrations/link">Link</a>'
-    )
+    return render(request, "registrations/index.html")
 
 
 def callback(request):
@@ -54,12 +60,21 @@ def callback(request):
     callback_uri = make_callback_uri(request)
 
     discord_session = make_session(callback_uri, state=request.GET["state"])
-    token = discord_session.fetch_token(
-        DISCORD_TOKEN_URL,
-        client_secret=DISCORD_CLIENT_SECRET,
-        code=request.GET["code"],
-        authorization_response=f"https://tylerdave.ngrok.com/{request.get_full_path()}",
-    )
+    try:
+        token = discord_session.fetch_token(
+            DISCORD_TOKEN_URL,
+            client_secret=DISCORD_CLIENT_SECRET,
+            code=request.GET["code"],
+            authorization_response=f"https://tylerdave.ngrok.com/{request.get_full_path()}",
+        )
+    except InvalidClientIdError:
+        context = {
+            "error_message": "Authorization is invalid or expired."
+        }
+        return render(request, "registrations/error.html", context=context, status=400)
+    except:
+        return generic_error_response(request)
+
     auth_session = make_session(callback_uri, token=token)
     user = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me").json()
     guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
