@@ -128,7 +128,7 @@ def callback(request):
         )
 
     add_user_to_guild(user["id"], token)
-    
+
     email_roles.discord_user_id = user["id"]
     email_roles.save()
     # guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()

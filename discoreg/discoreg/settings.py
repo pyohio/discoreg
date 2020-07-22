@@ -137,9 +137,12 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 SITE_ID = 1
 
-# SOCIALACCOUNT_AUTO_SIGNUP = True
-# ACCOUNT_AUTHENTICATION_METHOD = "email"
-# ACCOUNT_EMAIL_REQUIRED = True
+
+if raygun_apikey := os.environ.get("RAYGUN_APIKEY"):
+    MIDDLEWARE += ("raygun4py.middleware.django.Provider",)
+    RAYGUN4PY_CONFIG = {
+        "api_key": raygun_apikey,
+    }
 
 
 DISCORD_CLIENT_ID = os.environ["DISCORD_CLIENT_ID"]
@@ -156,7 +159,6 @@ DISCORD_SCOPES = [
 DISCORD_GUILD_ID = os.environ["DISCORD_GUILD_ID"]
 DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 TITO_WEBHOOK_TOKEN = os.environ["TITO_WEBHOOK_TOKEN"]
-
 
 import django_heroku
 

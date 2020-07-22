@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registrations', '0006_auto_20200720_1612'),
+        ("registrations", "0006_auto_20200720_1612"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='emailrole',
-            name='discord_roles',
-            field=models.ManyToManyField(blank=True, to='registrations.DiscordRole'),
+            model_name="emailrole",
+            name="discord_roles",
+            field=models.ManyToManyField(blank=True, to="registrations.DiscordRole"),
         ),
     ]

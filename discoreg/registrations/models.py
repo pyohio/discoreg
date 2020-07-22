@@ -28,7 +28,9 @@ class EmailRole(models.Model):
     discord_roles = models.ManyToManyField(DiscordRole, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    discord_user_id = models.CharField(max_length=32, blank=True, null=True, default=None)
+    discord_user_id = models.CharField(
+        max_length=32, blank=True, null=True, default=None
+    )
 
     def __str__(self):
         # role_names = [role.name for role in self.discord_roles.all()]

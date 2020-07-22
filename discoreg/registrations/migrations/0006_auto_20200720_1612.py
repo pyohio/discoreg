@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registrations', '0005_emailrole_discord_user_id'),
+        ("registrations", "0005_emailrole_discord_user_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='emailrole',
-            name='discord_user_id',
+            model_name="emailrole",
+            name="discord_user_id",
             field=models.CharField(blank=True, default=None, max_length=32, null=True),
         ),
     ]
