@@ -4,7 +4,7 @@ import discord
 
 DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 
-from discoreg.registrations.models import EmailRole
+# from discoreg.registrations.models import EmailRole
 
 
 class MyClient(discord.Client):
@@ -28,6 +28,13 @@ class MyClient(discord.Client):
             counter += 1
             await channel.send(counter)
             await asyncio.sleep(5)  # task runs every 60 seconds
+
+            embed=discord.Embed(title="A Day Has Only 24±1 Hours", url="", description="Thunder Talk by Miroslav Šedivý (@tylerdave)", color=0x4d68a3)
+            embed.set_author(name="Next Up:")
+            embed.add_field(name="Video on YouTube:", value="[https://youtu.be/VtuHwDRkJU4](https://youtu.be/VtuHwDRkJU4)", inline=True)
+            await channel.send(embed=embed)
+
+    
 
 
 client = MyClient()

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 from datetime import timedelta
 
@@ -10,9 +11,12 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from nextupbot.models import SessionNotification
 
+logger = logging.getLogger(__name__)
+
 DISCORD_BOT_TOKEN = settings.DISCORD_BOT_TOKEN
 DISCORD_BOT_CHANNEL = settings.DISCORD_BOT_CHANNEL
 DISCORD_BOT_OFFSET_SECONDS = settings.DISCORD_BOT_OFFSET_SECONDS
+DISCORD_BOT_WINDOW_SECONDS = settings.DISCORD_BOT_WINDOW_SECONDS
 
 
 class BotClient(discord.Client):
@@ -29,8 +33,8 @@ class BotClient(discord.Client):
             return
         sn = self.notification
         embed_kwargs = {}
-        # if sn.color_hex_string:
-        #     embed_kwargs["color"] = hex(int(sn.color_hex_string, 16))
+        if sn.color_hex_string:
+            embed_kwargs["color"] = int(sn.color_hex_string, 16)
         if sn.url:
             embed_kwargs["url"] = sn.url
         if sn.description:
@@ -44,12 +48,15 @@ class BotClient(discord.Client):
 
     @sync_to_async
     def get_current_notification(self):
-        window = timedelta(seconds=5)
+        window = timedelta(seconds=DISCORD_BOT_WINDOW_SECONDS)
         offset = timedelta(seconds=DISCORD_BOT_OFFSET_SECONDS)
         now = timezone.now()
-        earliest = (now - window) + offset
-        latest = now + offset
-        sessions = SessionNotification.objects.filter(send_by__gte=earliest, send_by__lte=latest, sent=False).order_by("send_by")
+        earliest = now + offset
+        latest = now + window + offset
+        logger.error(f"now:{now} earliest:{earliest} latest:{latest}")
+        sessions = SessionNotification.objects.filter(
+            send_by__gte=earliest, send_by__lte=latest, sent=False
+        ).order_by("send_by")
         if sessions:
             self.notification = sessions[0]
         else:
@@ -70,18 +77,19 @@ class BotClient(discord.Client):
 
     async def my_background_task(self):
         await self.wait_until_ready()
-        counter = 0
+        # counter = 0
         channel = self.get_channel(DISCORD_BOT_CHANNEL)
         while not self.is_closed():
-            counter += 1
-            await channel.send(timezone.now())
+            # counter += 1
+            # await channel.send(timezone.now())
             await self.get_current_notification()
             if self.notification:
                 await self.build_embed()
                 await channel.send(embed=self.embed)
                 await self.set_notification_sent()
             else:
-                await channel.send("Nothin'")
+                logger.info("no notifications to send")
+                # await channel.send("Nothin'")
             await asyncio.sleep(5)
 
 
@@ -92,7 +100,9 @@ class Command(BaseCommand):
     #     parser.add_argument('poll_ids', nargs='+', type=int)
 
     def handle(self, *args, **options):
+        logger.info("creating bot client")
         bot = BotClient()
         bot.run(DISCORD_BOT_TOKEN)
+        logger.info("bot client ended")
 
         # self.stdout.write(self.style.SUCCESS('Successfully closed poll "%s"' % poll_id))
