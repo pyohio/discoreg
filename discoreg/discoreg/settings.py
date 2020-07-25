@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.sites",
     "django.contrib.staticfiles",
     "registrations",
+    "nextupbot",
 ]
 
 MIDDLEWARE = [
@@ -157,7 +158,10 @@ DISCORD_SCOPES = [
     "guilds.join",
 ]
 DISCORD_GUILD_ID = os.environ["DISCORD_GUILD_ID"]
+DISCORD_BOT_CHANNEL = int(os.environ.get("DISCORD_BOT_CHANNEL", "734788395024515153"))
+DISCORD_BOT_OFFSET_SECONDS = int(os.environ.get("DISCORD_BOT_OFFSET_SECONDS", "0"))
 DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
+DISCORD_BOT_WINDOW_SECONDS = int(os.environ.get("DISCORD_BOT_WINDOW_SECONDS", "30"))
 TITO_WEBHOOK_TOKEN = os.environ["TITO_WEBHOOK_TOKEN"]
 
 import django_heroku
