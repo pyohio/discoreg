@@ -131,36 +131,11 @@ def callback(request):
 
     email_roles.discord_user_id = user["id"]
     email_roles.save()
-    # guilds = auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
-
-    # joined = auth_session.put(f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/members/{user['id']}").json()
-    # roles = auth_session.get(f"{DISCORD_API_BASE_URL}/guilds/{DISCORD_GUILD_ID}/roles").json()
-    # guilds2 = None #auth_session.get(f"{DISCORD_API_BASE_URL}/users/@me/guilds").json()
-    # = discord_session.get(f"{DISCORD_API_BASE_URL}/users/@me").json()
-    #
+   
     added_roles = []
     for discord_role in email_roles.discord_roles.all():
         add_user_to_role(user["id"], discord_role.discord_role_id)
         added_roles.append(discord_role.name)
-
-    # app_url = f"{DISCORD_API_BASE_URL}/applications/@me"
-    # app_response = requests.get(app_url, headers=auth_headers)
-
-    details = {
-        # "token": token,
-        # "access_token": token["access_token"],
-        # "user_id": user["id"],
-        # "join_url": join_url,
-        # "request_headers": joined_response.request.headers,
-        # "request_body": joined_response.request.body,
-        # "roles": roles,
-        # "role_data": role_data,
-        # "role_url": role_response.request.url,
-        # "role_response": role_response,
-        # "user_res_data": user_response.json(),
-        # "app_response": app_response.json(),
-    }
-    # details= None
 
     context = {
         "joined_username": user["username"],
