@@ -25,7 +25,7 @@ DISCORD_TOKEN_URL = settings.DISCORD_TOKEN_URL
 
 
 def make_callback_uri(request):
-    # FIXME: this is a hack! Need to figure out how to make sure this is a secure URI
+    # FIXME: This is giving us an HTTP URL and we need HTTPS. Probably another way to do this?
     return request.build_absolute_uri(reverse("registrations:callback")).replace(
         "http://", "https://"
     )
@@ -63,6 +63,7 @@ def get_user(auth_session):
 
 
 def add_user_to_guild(user_id, token):
+    """ Add a user to a server (guild). Requires server user management and the user's permission. """
     auth_headers = {
         "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
     }
@@ -75,6 +76,7 @@ def add_user_to_guild(user_id, token):
 
 
 def add_user_to_role(user_id, role_id):
+    """ Add a role to a user. Requires server role management. """
     auth_headers = {
         "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
     }
@@ -89,6 +91,7 @@ def index(request):
 
 
 def callback(request):
+    """ Handle callback after authentication with Discord. Adds authenticated user to server and roles(s). """
     if request.GET.get("error"):
         return render_error_response(
             request,
@@ -146,6 +149,7 @@ def callback(request):
 
 
 def link(request):
+    """ Redirect to Discord auth URL which prompts for user permissions. """
     callback_uri = make_callback_uri(request)
     discord_session = make_session(callback_uri)
     authorization_url, state = discord_session.authorization_url(
