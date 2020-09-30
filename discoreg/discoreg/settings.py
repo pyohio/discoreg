@@ -26,9 +26,8 @@ SECRET_KEY = "^v2lvne2s4m!no!z)x6rhx%#a6+9p%7o@vj)=3e=(y01dskz)v"
 DEBUG = os.environ.get("DEBUG", False) == "1"
 
 ALLOWED_HOSTS = [
-    "pygotham-chat-staging.herokuapp.com",
-    "pygotham-chat-prod.herokuapp.com",
-    "chat.pygotham.tv",
+    "pyohio-registration.herokuapp.com",
+    "chat.pyohio.org",
     "tylerdave.ngrok.io",
     "localhost",
 ]

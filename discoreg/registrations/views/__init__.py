@@ -127,7 +127,7 @@ def callback(request):
         return render_error_response(
             request,
             error_title="Email Not Registered",
-            error_message=f"A registration could not be found using your Discord account email address: {user['email']}. Please register for PyGotham TV using that email address or log in with another Discord account and then return to this site.",
+            error_message=f"A registration could not be found using your Discord account email address: {user['email']}. Please register for PyOhio using that email address or log in with another Discord account and then return to this site.",
         )
 
     add_user_to_guild(user["id"], token)
