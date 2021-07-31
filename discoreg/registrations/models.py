@@ -36,6 +36,9 @@ class EmailRole(models.Model):
         # role_names = [role.name for role in self.discord_roles.all()]
         return f"{self.email}"
 
+    class Meta:
+        ordering = ["email"]
+
 
 class Registration(models.Model):
     reference_id = models.CharField(max_length=32)
@@ -45,3 +48,6 @@ class Registration(models.Model):
 
     def __str__(self):
         return f"{self.reference_id} ({self.email.email})"
+
+    class Meta:
+        ordering = ["email"]
