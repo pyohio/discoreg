@@ -17,6 +17,8 @@ gunicorn = "*"
 bleach = "*"
 raygun4py = "*"
 pyyaml = "*"
+"ruamel.yaml" = "*"
+arrow = "*"
 
 [requires]
 python_version = "3.9"

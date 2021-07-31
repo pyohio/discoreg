@@ -43,11 +43,11 @@ class BotClient(discord.Client):
         if sn.author_name:
             embed.set_author(name=sn.author_name)
         if sn.field_1_name:
-            embed.add_field(name=sn.field_1_name, value=sn.field_1_value)
+            embed.add_field(name=sn.field_1_name, value=sn.field_1_value, inline=False)
         if sn.field_2_name:
-            embed.add_field(name=sn.field_2_name, value=sn.field_2_value)
+            embed.add_field(name=sn.field_2_name, value=sn.field_2_value, inline=False)
         if sn.field_3_name:
-            embed.add_field(name=sn.field_3_name, value=sn.field_3_value)
+            embed.add_field(name=sn.field_3_name, value=sn.field_3_value, inline=False)
         self.embed = embed
 
     @sync_to_async
