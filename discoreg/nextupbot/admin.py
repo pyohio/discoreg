@@ -2,4 +2,7 @@ from django.contrib import admin
 
 from .models import SessionNotification
 
-admin.site.register(SessionNotification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('send_by', 'title')
+
+admin.site.register(SessionNotification, NotificationAdmin)
