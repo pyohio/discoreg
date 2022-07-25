@@ -117,6 +117,7 @@ def callback(request):
             request, error_message="Authorization invalid or expired."
         )
     except:
+        raise
         return render_error_response(request)
 
     auth_session = make_session(callback_uri, token=token)
