@@ -34,7 +34,7 @@ def create_notifications(model, talks):
             description="",
             color_hex_string="502962",
             author_name="Up next:",
-            send_by=talk_timestamp.isoformat()
+            send_by=talk_timestamp.isoformat(),
         )
 
         if talk["type"].endswith("Talk"):
@@ -43,8 +43,10 @@ def create_notifications(model, talks):
             )
         if talk.get("youtube_url"):
             new_notification.field_1_name = "YouTube Video:"
-            new_notification.field_1_value = f"[{talk['youtube_url']}]({talk['youtube_url']})"
-        
+            new_notification.field_1_value = (
+                f"[{talk['youtube_url']}]({talk['youtube_url']})"
+            )
+
         if talk["type"].endswith("Talk"):
             new_notification.field_2_name = "Q&A Channel:"
             if talk["qna"]:

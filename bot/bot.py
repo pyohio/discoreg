@@ -29,12 +29,19 @@ class MyClient(discord.Client):
             await channel.send(counter)
             await asyncio.sleep(5)  # task runs every 60 seconds
 
-            embed=discord.Embed(title="A Day Has Only 24±1 Hours", url="", description="Thunder Talk by Miroslav Šedivý (@tylerdave)", color=0x4d68a3)
+            embed = discord.Embed(
+                title="A Day Has Only 24±1 Hours",
+                url="",
+                description="Thunder Talk by Miroslav Šedivý (@tylerdave)",
+                color=0x4D68A3,
+            )
             embed.set_author(name="Next Up:")
-            embed.add_field(name="Video on YouTube:", value="[https://youtu.be/VtuHwDRkJU4](https://youtu.be/VtuHwDRkJU4)", inline=True)
+            embed.add_field(
+                name="Video on YouTube:",
+                value="[https://youtu.be/VtuHwDRkJU4](https://youtu.be/VtuHwDRkJU4)",
+                inline=True,
+            )
             await channel.send(embed=embed)
-
-    
 
 
 client = MyClient()

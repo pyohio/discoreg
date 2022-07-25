@@ -51,6 +51,8 @@ def make_session(redirect_uri, token=None, state=None, scope=None):
 def render_error_response(request, error_title=None, error_message=None, status=400):
     if error_message is None:
         error_message = "There was an error verifying your account."
+    if error_title is None:
+        error_title = "Unexpected Error"
     context = {
         "error_title": bleach.clean(error_title),
         "error_message": bleach.clean(error_message),
@@ -63,7 +65,7 @@ def get_user(auth_session):
 
 
 def add_user_to_guild(user_id, token):
-    """ Add a user to a server (guild). Requires server user management and the user's permission. """
+    """Add a user to a server (guild). Requires server user management and the user's permission."""
     auth_headers = {
         "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
     }
@@ -76,7 +78,7 @@ def add_user_to_guild(user_id, token):
 
 
 def add_user_to_role(user_id, role_id):
-    """ Add a role to a user. Requires server role management. """
+    """Add a role to a user. Requires server role management."""
     auth_headers = {
         "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
     }
@@ -91,7 +93,7 @@ def index(request):
 
 
 def callback(request):
-    """ Handle callback after authentication with Discord. Adds authenticated user to server and roles(s). """
+    """Handle callback after authentication with Discord. Adds authenticated user to server and roles(s)."""
     if request.GET.get("error"):
         return render_error_response(
             request,
@@ -134,7 +136,7 @@ def callback(request):
 
     email_roles.discord_user_id = user["id"]
     email_roles.save()
-   
+
     added_roles = []
     for discord_role in email_roles.discord_roles.all():
         add_user_to_role(user["id"], discord_role.discord_role_id)
@@ -149,7 +151,7 @@ def callback(request):
 
 
 def link(request):
-    """ Redirect to Discord auth URL which prompts for user permissions. """
+    """Redirect to Discord auth URL which prompts for user permissions."""
     callback_uri = make_callback_uri(request)
     discord_session = make_session(callback_uri)
     authorization_url, state = discord_session.authorization_url(

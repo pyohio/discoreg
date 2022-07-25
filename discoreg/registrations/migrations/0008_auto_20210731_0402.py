@@ -6,16 +6,16 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('registrations', '0007_auto_20200720_1631'),
+        ("registrations", "0007_auto_20200720_1631"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='emailrole',
-            options={'ordering': ['email']},
+            name="emailrole",
+            options={"ordering": ["email"]},
         ),
         migrations.AlterModelOptions(
-            name='registration',
-            options={'ordering': ['email']},
+            name="registration",
+            options={"ordering": ["email"]},
         ),
     ]

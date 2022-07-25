@@ -14,6 +14,7 @@ DISCORD_BOT_TOKEN = settings.DISCORD_BOT_TOKEN
 DISCORD_BOT_CHANNEL = settings.DISCORD_BOT_CHANNEL
 DISCORD_BOT_OFFSET_SECONDS = settings.DISCORD_BOT_OFFSET_SECONDS
 
+
 class BotClient(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,7 +35,7 @@ class BotClient(discord.Client):
             embed_kwargs["url"] = sn.url
         if sn.description:
             embed_kwargs["description"] = sn.description
-        embed=discord.Embed(title=sn.title, **embed_kwargs)
+        embed = discord.Embed(title=sn.title, **embed_kwargs)
         if sn.author_name:
             embed.set_author(name=sn.author_name)
         if sn.field_1_name:
@@ -43,12 +44,12 @@ class BotClient(discord.Client):
 
     @sync_to_async
     def get_current_notification(self):
-       # window = timedelta(seconds=5)
-        #offset = timedelta(seconds=DISCORD_BOT_OFFSET_SECONDS)
+        # window = timedelta(seconds=5)
+        # offset = timedelta(seconds=DISCORD_BOT_OFFSET_SECONDS)
 
         # now = timezone.now()
         sessions = SessionNotification.objects.all()
-        self.notification=sessions[0]
+        self.notification = sessions[0]
 
     async def on_ready(self):
         print("Logged on as {0}!".format(self.user))
@@ -71,8 +72,9 @@ class BotClient(discord.Client):
             #     await channel.send("Nothin'")
             await asyncio.sleep(3)
 
+
 class Command(BaseCommand):
-    help = 'Start a Discord bot to post notifications about upcoming events.'
+    help = "Start a Discord bot to post notifications about upcoming events."
 
     # def add_arguments(self, parser):
     #     parser.add_argument('poll_ids', nargs='+', type=int)
@@ -81,4 +83,4 @@ class Command(BaseCommand):
         bot = BotClient()
         bot.run(DISCORD_BOT_TOKEN)
 
-            # self.stdout.write(self.style.SUCCESS('Successfully closed poll "%s"' % poll_id))
+        # self.stdout.write(self.style.SUCCESS('Successfully closed poll "%s"' % poll_id))

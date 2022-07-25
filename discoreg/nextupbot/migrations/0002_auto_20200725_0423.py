@@ -6,18 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('nextupbot', '0001_initial'),
+        ("nextupbot", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='sessionnotification',
-            name='author_email',
-            field=models.EmailField(blank=True, default='', max_length=254),
+            model_name="sessionnotification",
+            name="author_email",
+            field=models.EmailField(blank=True, default="", max_length=254),
         ),
         migrations.AlterField(
-            model_name='sessionnotification',
-            name='author_name',
-            field=models.CharField(blank=True, default='Up next:', max_length=256, null=True),
+            model_name="sessionnotification",
+            name="author_name",
+            field=models.CharField(
+                blank=True, default="Up next:", max_length=256, null=True
+            ),
         ),
     ]
