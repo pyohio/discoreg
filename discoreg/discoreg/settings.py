@@ -160,9 +160,9 @@ DISCORD_TOKEN_URL = f"{DISCORD_API_BASE_URL}/oauth2/token"
 DISCORD_SCOPES = [
     "identify",
     "email",
-    "guilds",
+    # "guilds",
     "guilds.join",
-    "connections",
+    # "connections",
 ]
 DISCORD_GUILD_ID = os.environ["DISCORD_GUILD_ID"]
 DISCORD_BOT_CHANNEL = int(os.environ.get("DISCORD_BOT_CHANNEL", "734788395024515153"))
