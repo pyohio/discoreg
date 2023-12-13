@@ -1,3 +1,6 @@
 {
-    "python.formatting.provider": "black"
+  "python.formatting.provider": "black",
+  "html.format.enable": false,
+  "editor.formatOnSave": false,
+  "editor.formatOnType": false
 }
