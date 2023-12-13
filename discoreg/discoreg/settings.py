@@ -27,11 +27,12 @@ DEBUG = os.environ.get("DEBUG", False) == "1"
 
 ALLOWED_HOSTS = [
     "pyohio-registration.herokuapp.com",
+    "prod-pyohio-registration.herokuapp.com",
+    "admin.pyohio.org",
     "chat.pyohio.org",
     "tylerdave.ngrok.io",
     "localhost",
 ]
-
 
 # Application definition
 
