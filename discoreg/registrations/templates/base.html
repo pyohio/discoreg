@@ -1,40 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-112992906-4"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-112992906-4');
-    </script>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}Chat w/ PyOhio on Discord{% endblock %}</title>
-    <link rel="stylesheet" href="https://unpkg.com/bulmaswatch/cyborg/bulmaswatch.min.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}PyOhio Admin{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/bulmaswatch/cyborg/bulmaswatch.min.css"
+    />
 
-    <meta name="title" content="Chat w/ PyOhio on Discord">
-    <meta name="description" content="Link your PyOhio registration to your Discord account to be invited to our server.">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://chat.pyohio.org/">
-    <meta property="og:title" content="Chat w/ PyOhio on Discord">
-    <meta property="og:description" content="Link your PyOhio registration to your Discord account to be invited to our server.">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://chat.pyohio.org/">
-    <meta property="twitter:title" content="Chat w/ PyOhio on Discord">
-    <meta property="twitter:description" content="Link your PyOhio registration to your Discord account to be invited to our server.">
-    </head>
+    <meta name="title" content="PyOhio Admin" />
+    <meta name="description" content="PyOhio tools" />
+  </head>
   <body>
-  <section class="section">
-    <div class="container">
-      {% block content %}
-      {% endblock %}
-    </div>
-  </section>
+    <section class="section">
+      <div class="container">{% block content %} {% endblock %}</div>
+    </section>
   </body>
 </html>

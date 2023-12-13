@@ -1,30 +1,23 @@
-{% extends "base.html" %}
-
-{% block title %}Register for PyOhio Chat{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}PyOhio Registration Not Required{%
+endblock %} {% block content %}
 
 <div class="content">
-    <h1 class="title">Join PyOhio on Discord!</h1>
-    <p>PyOhio is using Discord for attendee chat during the conference. In order to join the PyOhio server you will need a Discord account and a (free!) PyOhio registration using the same email address as your Discord account.</p>
-    <div class="box">
-        <h2 class="subtitle">1. Register for PyOhio</h2>
-        <p>To be added to our Discord server you need to register for the conference using the same email address as your Discord account.
-        <p>Already registered? Skip to step 2.</p>
-        <p><a href="https://www.pyohio.org/register" target="_blank" class="button is-link">Register for PyOhio</a></p>
-    </div>
-    <div class="box">
-        <h2 class="subtitle">2. Log in to Discord</h2>
-        <p>Log in to your existing Discord.com account or create a new one.</p>
-        <p>Note: The email address for your Discord account must match your PyOhio registration. If you already registered using 
-        a different email address, you may register again with the matching address. There is no need to cancel your duplicate registration.</p>
-        <p><a href="https://discord.com/login" target="_blank" class="button is-link">Log in to Discord</a></p>
-    </div>
-    <div class="box">   
-        <h2 class="subtitle">3. Link your Registration</h2>
-        <p>The link below will take you to a Discord page asking you to give us permission to see your Discord account email address and to add your account to our server. We will use this to validate your registration and then add you to the server.</p>
-        <p><a href="{% url "registrations:link" %}" class="button is-link">Verify Registration</a></p>
-    </div>
-    <p>If you have any trouble with this process, please email info@pyohio.org for help.</p>
+  <h1 class="title">No Registration Required</h1>
+  <div class="box">
+    <h2 class="subtitle">1. Register for PyOhio</h2>
+    <p>
+      No registration is required for PyOhio 2023! Visit our website for the
+      video streaming link, instructions for accessing Discord, and more
+      information.
+    </p>
+    <p>
+      <a
+        href="https://www.pyohio.org/2023"
+        target="_blank"
+        class="button is-link"
+        >PyOhio Website</a
+      >
+    </p>
+  </div>
 </div>
 {% endblock %}
