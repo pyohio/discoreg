@@ -19,7 +19,7 @@ class BotClient(discord.Client):
         super().__init__(*args, **kwargs)
 
         # create the background task and run it in the background
-        # self.bg_task = self.loop.create_task(self.assign_roles())
+        # self.bg_task = self.loop.create_task(self.test_loop())
         self.embed = None
         self.notification = None
 
@@ -28,7 +28,7 @@ class BotClient(discord.Client):
 
     async def on_message(self, message):
         debug_channel = self.get_channel(DISCORD_BOT_DEBUG_CHANNEL)
-        role = message.author.guild.get_role(DISCORD_BOT_EVENT_ROLE)
+
         if arrow.utcnow() < DISCORD_BOT_EVENT_START_DATETIME:
             print("Before event start, ignoring")
             return
@@ -39,16 +39,39 @@ class BotClient(discord.Client):
         if message.author == self.user:
             return
         print("Message from {0.author}: {0.content}".format(message))
-        await debug_channel.send(
-            "Saw message from {0.author} in {0.channel}: {0.content}".format(message)
-        )
-        if role not in message.author.roles:
-            await message.author.add_roles(role)
+        # await debug_channel.send(
+        #     "Saw message from {0.author} in {0.channel}: {0.content}".format(message)
+        # )
+        await self.assign_role(message.author)
+
+    async def on_raw_reaction_add(self, payload):
+        debug_channel = self.get_channel(DISCORD_BOT_DEBUG_CHANNEL)
+
+        if arrow.utcnow() < DISCORD_BOT_EVENT_START_DATETIME:
+            print("Before event start, ignoring")
+            return
+        if arrow.utcnow() > DISCORD_BOT_EVENT_END_DATETIME:
+            print("After event end, ignoring")
+            return
+
+        print("Raw reaction from {0}: {1}".format(payload, payload))
+        # await debug_channel.send(
+        #     "Saw raw reaction from {0} on {1}: {2}".format(
+        #         payload.user_id, payload.message_id, payload.emoji
+        #     )
+        # )
+        await self.assign_role(payload.member)
+
+    async def assign_role(self, member):
+        debug_channel = self.get_channel(DISCORD_BOT_DEBUG_CHANNEL)
+        role = member.guild.get_role(DISCORD_BOT_EVENT_ROLE)
+        if role not in member.roles:
+            await member.add_roles(role)
             await debug_channel.send(
-                "Added role {0.name} to {1.name}".format(role, message.author)
+                "Added role <@&{0.id}> to <@{1.id}>".format(role, member)
             )
 
-    async def assign_roles(self):
+    async def test_loop(self):
         await self.wait_until_ready()
         counter = 0
         channel = self.get_channel(DISCORD_BOT_DEBUG_CHANNEL)
