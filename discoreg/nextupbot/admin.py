@@ -8,6 +8,11 @@ import pytz
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ("send_by_local_time", "sent", "title")
 
+
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ("send_by_local_time", "sent", "title")
+    ordering = ("send_by", "title")
+
     # formfield_overrides = {
     #     models.TextField: {"widget": admin.widgets.AdminTextareaWidget}
     # }
