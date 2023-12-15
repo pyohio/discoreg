@@ -24,6 +24,7 @@ class SessionNotification(models.Model):
     author_email = models.EmailField(blank=True, default="")
     send_by = models.DateTimeField()
     sent = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
