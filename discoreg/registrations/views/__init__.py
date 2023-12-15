@@ -1,9 +1,7 @@
-import os
-
 import bleach
 import requests
 from django.core.exceptions import ObjectDoesNotExist
-from django.urls import resolve, reverse
+from django.urls import reverse
 from django.http import HttpResponse
 from django.conf import settings
 from django.shortcuts import redirect, render
@@ -128,8 +126,8 @@ def callback(request):
     except ObjectDoesNotExist:
         return render_error_response(
             request,
-            error_title="Email Not Registered",
-            error_message=f"A registration could not be found using your Discord account email address: {user['email']}. Please register for PyOhio using that email address or log in with another Discord account and then return to this site.",
+            error_title="Email Not Recognized",
+            error_message=f"A speaker record could not be found using your Discord account email address: {user['email']}. If you used a different email address for the CFP, please contact us at info@pyohio.org with your Discord username and email.",
         )
 
     add_user_to_guild(user["id"], token)

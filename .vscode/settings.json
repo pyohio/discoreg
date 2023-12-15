@@ -2,5 +2,6 @@
   "python.formatting.provider": "black",
   "html.format.enable": false,
   "editor.formatOnSave": false,
-  "editor.formatOnType": false
+  "editor.formatOnType": false,
+  "ruff.fixAll": false
 }
