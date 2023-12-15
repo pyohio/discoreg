@@ -1,6 +1,4 @@
-{% extends "base.html" %} {% block title %}PyOhio Registration Not Required{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}PyOhio Registration Not Required{% endblock %} {% block content %}
 <div class="content">
   <h1 class="title">No Registration Required</h1>
   <div class="box">
@@ -16,6 +14,28 @@
         class="button is-link"
         >PyOhio Website</a
       >
+    </p>
+  </div>
+  <div class="box">
+    <h2>PyOhio 2023 Speakers</h2>
+    <p>
+      Are you a PyOhio 2023 speaker? If so, click here to have your speaker role
+      added to your Discord account.
+    </p>
+
+    <p>
+      <a
+        href={% url "registrations:link" %}
+        class="button is-link"
+        >Confirm Speaker Role</a
+      >
+    </p>
+    <p>
+      <em>
+      Note: The email you used for your PreTalx account must match the email you
+      used for your Discord account for this to work. If you use a different
+      email, please contact us at
+      <a href="mailto:info@pyohio.org">info@pyohio.org</a> with your Discord account email or DM an Admin on Discord.</em>
     </p>
   </div>
 </div>
