@@ -19,6 +19,7 @@ dependencies = [
     "django-typer",
     "rich",
     "piexif",
+    "iptcinfo3",
 ]
 
 [project.optional-dependencies]

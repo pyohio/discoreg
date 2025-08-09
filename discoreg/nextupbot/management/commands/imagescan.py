@@ -1,6 +1,6 @@
 import asyncio
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 
@@ -8,6 +8,7 @@ import discord
 import aiohttp
 import typer
 import piexif
+from iptcinfo3 import IPTCInfo
 from django.conf import settings
 from django_typer.management import TyperCommand
 from rich.console import Console
@@ -75,6 +76,16 @@ class Command(TyperCommand):
             "--verbose", "-v",
             help="Show detailed output including message content"
         ),
+        from_date: Optional[str] = typer.Option(
+            None,
+            "--from-date",
+            help="Filter messages from this date (YYYYMMDD or YYYY-MM-DD). Defaults to 1 year ago."
+        ),
+        to_date: Optional[str] = typer.Option(
+            None,
+            "--to-date",
+            help="Filter messages up to this date (YYYYMMDD or YYYY-MM-DD). Defaults to now."
+        ),
     ):
         """
         Scan a Discord channel for messages containing images.
@@ -90,6 +101,9 @@ class Command(TyperCommand):
         except ValueError:
             console.print(f"[red]Error: Invalid channel ID '{channel_id}'[/red]")
             raise typer.Exit(1)
+        
+        # Parse date filters
+        from_dt, to_dt = self.parse_date_filters(from_date, to_date)
             
         asyncio.run(self.run_bot(
             channel_id_int,
@@ -97,8 +111,46 @@ class Command(TyperCommand):
             download,
             download_dir,
             show_embeds,
-            verbose
+            verbose,
+            from_dt,
+            to_dt
         ))
+
+    def parse_date_filters(self, from_date: Optional[str], to_date: Optional[str]) -> tuple[Optional[datetime], Optional[datetime]]:
+        """Parse date filter arguments into datetime objects"""
+        from_dt = None
+        to_dt = None
+        
+        # Parse from_date
+        if from_date:
+            from_dt = self.parse_date_string(from_date)
+        else:
+            # Default to 1 year ago
+            from_dt = datetime.now() - timedelta(days=365)
+        
+        # Parse to_date
+        if to_date:
+            to_dt = self.parse_date_string(to_date)
+        
+        return from_dt, to_dt
+    
+    def parse_date_string(self, date_str: str) -> datetime:
+        """Parse date string in YYYYMMDD or YYYY-MM-DD format"""
+        # Remove hyphens if present
+        clean_date = date_str.replace('-', '')
+        
+        if len(clean_date) != 8 or not clean_date.isdigit():
+            console.print(f"[red]Error: Invalid date format '{date_str}'. Use YYYYMMDD or YYYY-MM-DD[/red]")
+            raise typer.Exit(1)
+        
+        try:
+            year = int(clean_date[0:4])
+            month = int(clean_date[4:6])
+            day = int(clean_date[6:8])
+            return datetime(year, month, day)
+        except ValueError:
+            console.print(f"[red]Error: Invalid date '{date_str}'[/red]")
+            raise typer.Exit(1)
 
     async def run_bot(
         self, 
@@ -107,7 +159,9 @@ class Command(TyperCommand):
         download: bool,
         download_dir: str,
         show_embeds: bool,
-        verbose: bool
+        verbose: bool,
+        from_dt: Optional[datetime],
+        to_dt: Optional[datetime]
     ):
         intents = discord.Intents.default()
         intents.message_content = True
@@ -119,6 +173,8 @@ class Command(TyperCommand):
             download_dir=download_dir,
             show_embeds=show_embeds,
             verbose=verbose,
+            from_dt=from_dt,
+            to_dt=to_dt,
         )
         
         token = os.environ.get("DISCORD_BOT_TOKEN", settings.DISCORD_BOT_TOKEN)
@@ -130,7 +186,7 @@ class Command(TyperCommand):
 
 
 class ImageScannerClient(discord.Client):
-    def __init__(self, channel_id, limit, download, download_dir, show_embeds, verbose, **kwargs):
+    def __init__(self, channel_id, limit, download, download_dir, show_embeds, verbose, from_dt, to_dt, **kwargs):
         intents = discord.Intents.default()
         intents.message_content = True
         super().__init__(intents=intents)
@@ -140,6 +196,8 @@ class ImageScannerClient(discord.Client):
         self.download_dir = download_dir
         self.show_embeds = show_embeds
         self.verbose = verbose
+        self.from_dt = from_dt
+        self.to_dt = to_dt
         self.processed = False
 
     async def on_ready(self):
@@ -165,14 +223,33 @@ class ImageScannerClient(discord.Client):
 
             progress.update(task, description=f"Scanning #{channel.name}...")
             
+            # Show date range info
+            if self.from_dt or self.to_dt:
+                date_info = []
+                if self.from_dt:
+                    date_info.append(f"from {self.from_dt.strftime('%Y-%m-%d')}")
+                if self.to_dt:
+                    date_info.append(f"to {self.to_dt.strftime('%Y-%m-%d')}")
+                console.print(f"[yellow]📅 Date filter: {' '.join(date_info)}[/yellow]")
+            
             if self.download:
                 Path(self.download_dir).mkdir(exist_ok=True)
                 console.print(f"[yellow]📁 Download directory:[/yellow] {self.download_dir}")
 
             image_count = 0
             messages_with_images = []
+            messages_scanned = 0
 
             async for message in channel.history(limit=self.limit):
+                messages_scanned += 1
+                
+                # Apply date filters (convert message timestamp to naive datetime for comparison)
+                message_dt = message.created_at.replace(tzinfo=None)
+                if self.from_dt and message_dt < self.from_dt:
+                    continue
+                if self.to_dt and message_dt > self.to_dt:
+                    continue
+                    
                 has_images = False
                 images = []
 
@@ -219,6 +296,7 @@ class ImageScannerClient(discord.Client):
 
         # Display summary
         console.print()
+        console.print(f"[bold]Scanned {messages_scanned} messages[/bold]")
         console.print(f"[bold]Found {len(messages_with_images)} messages with {image_count} images[/bold]")
         console.print()
 
@@ -333,9 +411,12 @@ class ImageScannerClient(discord.Client):
                     if response.status == 200:
                         content = await response.read()
                         
-                        # Add EXIF attribution data if it's a JPEG
-                        if filename.lower().endswith(('.jpg', '.jpeg')):
-                            content = self.add_attribution_exif(content, author_name, message_id, message_timestamp)
+                        # Add EXIF and IPTC attribution data if it's actually a JPEG file (check content, not filename)
+                        if len(content) > 0 and self.is_jpeg_content(content):
+                            try:
+                                content = self.add_attribution_metadata(content, author_name, message_id, message_timestamp)
+                            except Exception as e:
+                                console.print(f"[yellow]Warning: Could not add metadata to {filename}: {str(e)}[/yellow]")
                         
                         with open(file_path, 'wb') as f:
                             f.write(content)
@@ -348,6 +429,71 @@ class ImageScannerClient(discord.Client):
         except Exception as e:
             console.print(f"[red]Error downloading {filename}: {str(e)}[/red]")
             return 'failed'
+
+    def is_jpeg_content(self, content: bytes) -> bool:
+        """Check if content is actually a JPEG file by examining file headers"""
+        if len(content) < 4:
+            return False
+        # JPEG files start with FF D8 and end with FF D9
+        return content.startswith(b'\xff\xd8') and content.endswith(b'\xff\xd9')
+
+    def add_attribution_metadata(self, image_data: bytes, author_name: str, message_id: int, message_timestamp) -> bytes:
+        """Add both EXIF and IPTC attribution metadata"""
+        try:
+            # First add EXIF data
+            image_data_with_exif = self.add_attribution_exif(image_data, author_name, message_id, message_timestamp)
+            
+            # Then add IPTC data using iptcinfo3
+            from io import BytesIO
+            import tempfile
+            import os
+            
+            # Write to temporary file since iptcinfo3 works better with files
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
+                temp_file.write(image_data_with_exif)
+                temp_file.flush()
+                temp_path = temp_file.name
+            
+            try:
+                # Suppress debug output from iptcinfo3
+                import sys
+                from io import StringIO
+                
+                # Capture stdout to suppress debug messages
+                old_stdout = sys.stdout
+                sys.stdout = StringIO()
+                
+                try:
+                    # Load IPTC info from temp file
+                    info = IPTCInfo(temp_path, force=True)
+                    
+                    # Add IPTC title for Google Photos compatibility
+                    title_text = f"PyOhio photo by {author_name}"
+                    info['object name'] = title_text
+                    info['caption/abstract'] = f"Photo from PyOhio by Discord user: {author_name}"
+                    info['by-line'] = author_name
+                    info['copyright notice'] = f"Uploaded by {author_name}"
+                    
+                    # Save changes back to the temp file
+                    info.save()
+                finally:
+                    # Restore stdout
+                    sys.stdout = old_stdout
+                
+                # Read the updated file back
+                with open(temp_path, 'rb') as f:
+                    result = f.read()
+                
+                return result
+                
+            finally:
+                # Clean up temp file
+                os.unlink(temp_path)
+            
+        except Exception as e:
+            console.print(f"[yellow]Warning: Could not add IPTC metadata: {str(e)}[/yellow]")
+            # Fall back to just EXIF data
+            return self.add_attribution_exif(image_data, author_name, message_id, message_timestamp)
 
     def add_attribution_exif(self, image_data: bytes, author_name: str, message_id: int, message_timestamp) -> bytes:
         """Add attribution information to EXIF data while preserving existing data"""
