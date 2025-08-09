@@ -1,0 +1,66 @@
+[project]
+name = "discoreg"
+version = "0.1.0"
+description = "Django app to manage Discord server invites based on conference registrations"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "django>=4.2,<5.0",
+    "requests-oauthlib",
+    "discord-py",
+    "django-heroku",
+    "psycopg2",
+    "gunicorn",
+    "bleach",
+    "raygun4py",
+    "pyyaml",
+    "ruamel.yaml",
+    "arrow",
+    "django-typer",
+    "rich",
+    "piexif",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "ipython",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+exclude = [
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".tox",
+    ".venv",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = []
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"

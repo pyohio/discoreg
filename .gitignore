@@ -129,3 +129,9 @@ dmypy.json
 .pyre/
 
 staticfiles/
+
+# Downloaded Discord images
+discord_images/
+
+# macOS
+.DS_Store
